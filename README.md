@@ -57,3 +57,34 @@ After the intended access boundary is chosen:
 The SA password must be supplied through the local `MSSQL_SA_PASSWORD` environment variable and must not be committed to the repository.
 
 The password that was previously committed to this project is considered compromised and must not be reused.
+
+## Container Image Versioning
+
+**Review status:** Audited  
+**Last reviewed:** September 2026
+
+The SQL Server Compose deployment currently uses:
+
+```yaml
+image: mcr.microsoft.com/mssql/server:2022-latest
+```
+
+The `2022-latest` tag keeps the deployment within the SQL Server 2022 release family, but it still allows the image revision to change when the environment is rebuilt.
+
+This is primarily a reproducibility and change-control concern. A future rebuild could use a different image revision than the one previously validated.
+
+### Planned remediation
+
+The next step is to determine the exact SQL Server image currently running in the live homelab before changing the Compose file.
+
+The remediation will then:
+
+1. Record the currently validated SQL Server image/version.
+2. Select an explicit version appropriate for the lab.
+3. Update the Compose file to use that version.
+4. Recreate the container in a controlled maintenance window.
+5. Validate database availability, authentication, persistent data, and application connectivity.
+
+**No image tag has been changed as part of this documentation update.**
+
+Version pinning should be treated as a controlled upgrade task rather than an automatic replacement.
